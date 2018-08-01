@@ -1,0 +1,1 @@
+json.(category, :id, :name, :order, :icon_url, :type)

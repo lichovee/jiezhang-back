@@ -1,0 +1,1 @@
+json.(@asset, :id, :name, :order, :icon_path, :parent_id, :type, :amount, :remark)
