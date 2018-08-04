@@ -15,12 +15,10 @@ class Api::SettingsController < Api::ApiController
 	end
 
 	def covers
-		data = [
-			{id: 1, name: '默认封面', val: 'default-1.jpeg', path: "#{Settings.host}/default-1.jpeg"},
-			{id: 2, name: '封面-01', val: 'default-2.jpeg',  path: "#{Settings.host}/default-2.jpeg"},
-			{id: 3, name: '封面-02', val: 'default-3.jpeg',  path: "#{Settings.host}/default-3.jpeg"},
-			{id: 4, name: '封面-03', val: 'default-4.jpeg',  path: "#{Settings.host}/default-4.jpeg"}
-		]
+		data = []
+		(1..13).each do |num|
+			data << {id: num, name: "封面-#{num}", val: "default-#{num}.jpeg", path: "../../public/images/covers/default-#{num}.jpeg" }
+		end
 		render_success data: data
 	end
 

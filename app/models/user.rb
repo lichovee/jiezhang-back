@@ -70,7 +70,11 @@ class User < ApplicationRecord
   end
 
   def set_budget?
-    !self.budget.zero?
+    !budget.zero?
+  end
+
+  def has_no_read_msg?
+    messages.where(already_read: 0).count > 0
   end
 
   # 坚持记账天数
