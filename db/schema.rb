@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180717050220) do
+ActiveRecord::Schema.define(version: 20180804114724) do
 
   create_table "asset_logs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "user_id"
@@ -99,12 +99,17 @@ ActiveRecord::Schema.define(version: 20180717050220) do
   end
 
   create_table "messages", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "title"
     t.integer "from_user_id"
     t.integer "target_id"
     t.integer "target_type"
     t.text "content"
+    t.string "content_type", default: "md"
+    t.string "avatar_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "already_read", default: 0
+    t.string "page_url"
   end
 
   create_table "pre_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

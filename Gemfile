@@ -1,4 +1,4 @@
-source "https://gems.ruby-china.org"
+source "https://gems.ruby-china.com"
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -16,9 +16,6 @@ gem "mysql2", group: :mysql
 # file upload
 gem 'carrierwave', '~> 1.0'
 gem "rmagick", "~> 2.13.1"
-
-# group date
-gem 'groupdate'
 
 # config
 gem 'config'
@@ -53,7 +50,7 @@ gem 'jbuilder', '~> 2.7'
 # Use SCSS for stylesheets
 # gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
+# gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 

@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_many :asset_logs
   has_many :pre_orders, foreign_key: :owner_id
   has_many :feedbacks
+  has_many :messages, foreign_key: :target_id
 
   validates :openid, presence: true, uniqueness: true
 

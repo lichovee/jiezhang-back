@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     
     resources :transfer, only: [:show]
     resources :pre_order
+    resources :message, only: [:index, :show]
 
     # 账单
     resources :statements do
