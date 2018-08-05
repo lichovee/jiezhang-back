@@ -18,4 +18,19 @@ module ApplicationHelper
     when 6 then '周六'
     end
   end
+
+  def get_percent(cur_amount, prev_amount)
+    all_amount = cur_amount + prev_amount
+    if cur_amount > prev_amount
+      percent = sprintf("%.2f", (cur_amount - prev_amount).to_f * 100 / all_amount).to_f
+      rise = 'income'
+      text = '增长'
+    else
+      percent = sprintf("%.2f",(prev_amount - cur_amount).to_f * 100 / all_amount).to_f
+      rise = 'expend'
+      text = '下降'
+    end
+    [percent, rise, text]
+  end
+
 end

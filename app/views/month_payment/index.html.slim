@@ -1,0 +1,109 @@
+.border-bottom
+  .header-big 总览
+  div
+    .color-block
+      .text.bg-block.income-bg-block 收入
+      .progress.income-bg style=("background-size: #{(@income_count * 100 /@total_asset.to_f).round(2)}% 100%;")
+        | #{money_format(@income_count)}
+        span 同期#{get_percent(@income_count, @prev_income_count)[2]} #{get_percent(@income_count, @prev_income_count)[0]}%
+    .color-block
+      .text.bg-block.expend-bg-block 支出
+      .progress.expend-bg style=("background-size: #{(@expend_count * 100 /@total_asset.to_f).round(2)}% 100%;")
+        | #{money_format(@expend_count)}
+        span 同期#{get_percent(@expend_count, @prev_expend_count)[2]} #{get_percent(@expend_count, @prev_expend_count)[0]}%
+    / .color-block
+      .text.bg-block.afford-bg-block 负债
+      .progress.afford-bg style=("background-size: #{(@afford_count * 100 /@total_asset.to_f).round(2)}% 100%;") 
+        | #{money_format(@total_income.to_i)}
+        span 同期#{get_percent(@afford_count, @prev_afford_count)[2]} #{get_percent(@afford_count, @prev_afford_count)[0]}%
+    .color-block
+      .text.bg-block.surplus-bg-block 结余
+      .progress.surplus-bg style=("background-size: #{(@surplus * 100 /@total_asset.to_f).round(2)}% 100%;")
+        | #{money_format(@surplus)}
+        span 同期#{get_percent(@surplus, @prev_surplus)[2]} #{get_percent(@surplus, @prev_surplus)[0]}%
+.border-bottom
+  .header-big 消费类型
+  .type-rank
+    .header-small 消费类型排行
+    .type-rank-row
+      - @categories_order_10.each_with_index do |item, index|
+        .flex-between
+          div
+            span style=("margin-right: 4px;") #{index+1}
+            span #{item.name}
+          div #{item.amount_sum}
+    .header-small 单笔消费排行
+    .type-rank
+      .type-rank-row
+        - @expend_order_10.each_with_index do |item, index|
+          .flex-between
+            div
+              span style=("margin-right: 4px;") #{index + 1}
+              span #{item.category.name}
+            div #{money_format(item.amount)}
+    .header-small 消费最多的一周（#{@week_sts[:statements].first.created_at.beginning_of_week.strftime("%m.%d")} - #{@week_sts[:statements].first.created_at.end_of_week.strftime("%m.%d")}）
+    .text
+      div 共消费 #{@week_sts[:amount]}, 占月支出 #{(@week_sts[:amount] * 100/@expend_count.to_f).round(2)}%
+      .most-expend-week
+        - @week_sts[:statements].each do |item|
+          .flex-between
+            div = item.category.name
+            div = item.amount
+
+    - that_day = @expend_most_day.first
+    .header-small 消费最多的一天（#{that_day.created_at.strftime("%m月%d日")}，#{weekday(that_day.created_at.wday)}）
+    .text
+      - @expend_most_day.each do |item|
+        .flex-between
+          div = item.category.name
+          div = item.amount
+      .flex-between
+        div 共计
+        div #{money_format(@expend_most_day.sum(:amount))}
+.border-bottom
+  .header-big 支出类型使用情况
+  .text
+    .flex-between
+      div 支出类型
+      div 使用次数
+    div
+      - @category_frequent.each do |item|
+        .flex-between
+          div #{item.category_name}
+          div #{item.count}
+.border-bottom
+  .header-big 转账情况
+  .text
+    .has-remarks
+      - @assets_logs.each do |item|
+        .flex-between
+          div #{item.source.name} -> #{item.target.name}
+          div #{item.amount}
+          div #{item.created_at.strftime("%Y-%m-%d")}
+.border-bottom
+  .header-big 备注的消费
+  .text
+    .has-remarks
+      - @has_remark_sts.each do |item|
+        .flex-between
+          div = item.category.name
+          div = item.amount
+          div = item.created_at.strftime('%Y-%m-%d')
+        .text-grey 备注： #{item.description}
+/ .border-bottom
+  .header-big 预算使用情况
+  .text
+    div 超出预算的类型
+    div
+      .flex-between
+        div 类型
+        div 预算额度
+        div 超出金额
+      - @budgets.each do |item|
+        .flex-between
+          div = item.name
+          div = item.budget
+          div 300
+    div 预算超出总金额： 3500
+/ div 建议
+

@@ -19,7 +19,8 @@ gem "rmagick", "~> 2.13.1"
 
 # config
 gem 'config'
-
+gem 'slim'
+gem "slim-rails"
 # request
 gem 'rest-client', '~> 2.0.0'
 

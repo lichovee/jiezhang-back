@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root to: "home#index", defaults: {format: :json}
   namespace :api, { defaults: { format: :json } } do
     resources :users, only: [:index, :create] do
@@ -27,7 +26,11 @@ Rails.application.routes.draw do
     
     resources :transfer, only: [:show]
     resources :pre_order
-    resources :message, only: [:index, :show]
+    resources :message, only: [:index, :show] do
+      collection do 
+        get :test
+      end
+    end
 
     # 账单
     resources :statements do

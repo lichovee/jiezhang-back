@@ -70,17 +70,4 @@ class Api::SuperChartController < Api::ApiController
         @prev_statements = current_user.statements
       end
     end
-
-    def get_percent(cur_amount, prev_amount)
-      all_amount = cur_amount + prev_amount
-      if cur_amount > prev_amount
-        percent = sprintf("%.2f", (cur_amount - prev_amount).to_f * 100 / all_amount).to_f
-        rise = 'income'
-      else
-        percent = sprintf("%.2f",(prev_amount - cur_amount).to_f * 100 / all_amount).to_f
-        rise = 'expend'
-      end
-      [percent, rise]
-    end
-
 end
