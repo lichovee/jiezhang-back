@@ -16,7 +16,7 @@ class Api::SettingsController < Api::ApiController
 
 	def covers
 		data = []
-		(1..13).each do |num|
+		(5..13).each do |num|
 			data << {id: num, name: "封面-#{num}", val: "default-#{num}.jpeg", path: "../../public/images/covers/default-#{num}.jpeg" }
 		end
 		render_success data: data
