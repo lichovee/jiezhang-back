@@ -1,14 +1,9 @@
 class Api::IndexController < Api::ApiController
-  
   def index
-    @statements = current_user.statements
-    @statements, @surplus = StatementsFilterService.new(current_user, @statements, params).execute
-    if params[:scope] == 'year' || params[:scope] == 'month'
-      return render 'api/index/year'
-    end
+    begin_week = Time.now.beginning_of_week.beginning_of_day
+    end_week = Time.now.end_of_week.end_of_day
+    @statements = current_user.statements.expend.includes(:category, :asset).where("created_at >= ? AND created_at <= ?", begin_week, end_week).order('created_at desc')
     return render json: { status: 405, msg: '没有更多啦' } if @statements.blank?
-    @statements = Kaminari.paginate_array(@statements).page(params[:page]).per(20)
-    @statements.sort_by!(&:created_at).reverse!
   end
 
   def header
