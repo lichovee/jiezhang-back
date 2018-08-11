@@ -29,8 +29,8 @@ class Api::WalletController < Api::ApiController
       name: asset.name,
       income: money_format(income_amount), 
       expend: money_format(expend_amount), 
-      surplus: money_format(asset.amount.zero? ? surplus : asset.amount),
-      source_surplus: asset.amount.zero? ? surplus : asset.amount
+      surplus: money_format(asset.amount),
+      source_surplus: asset.amount
     }
   end
 
