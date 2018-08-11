@@ -1,1 +1,1 @@
-json.(@pre_order, :id, :name, :amount, :remark)
+json.(@pre_order, :id, :name, :amount, :remark, :state, :address)

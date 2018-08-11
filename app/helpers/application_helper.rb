@@ -1,5 +1,6 @@
 module ApplicationHelper
-	include ActionView::Helpers::NumberHelper
+  include ActionView::Helpers::NumberHelper
+  include LetterAvatar::AvatarHelper
 	# 货币格式化
 	# 1000 -> 1000.00
 	# 13000 -> 13,000.00

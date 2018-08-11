@@ -13,6 +13,13 @@ gem 'rails', '~> 5.1.3'
 # Use sqlite3 as the database for Active Record
 gem "mysql2", group: :mysql
 
+# letter_avatar
+gem 'letter_avatar'
+gem 'chinese_pinyin'
+
+# State machine
+gem "state_machine"
+
 # file upload
 gem 'carrierwave', '~> 1.0'
 gem "rmagick", "~> 2.13.1"

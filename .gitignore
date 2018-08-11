@@ -34,5 +34,6 @@ public/uploads
 config/environments/*.rb
 config/unicorn.rb
 .idea
+public/letters
 # Ignore encrypted secrets key file.
 config/secrets.yml.key

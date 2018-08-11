@@ -25,7 +25,13 @@ Rails.application.routes.draw do
     end
     
     resources :transfer, only: [:show]
-    resources :pre_order, only: [:index, :show, :create, :update, :destroy]
+
+    resources :pre_order, only: [:index, :show, :create, :update, :destroy] do
+      member do
+        put :mark
+      end
+    end
+
     resources :message, only: [:index, :show] do
       collection do 
         get :test
