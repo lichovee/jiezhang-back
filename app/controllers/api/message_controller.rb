@@ -1,15 +1,16 @@
 class Api::MessageController < Api::ApiController
   before_action :get_data, only: [:index, :test]
   def index
-    content = render_to_string(:template => 'month_payment/index.html', layout: false)
-    current_user.messages.create(
-      title: '账单',
-      target_id: 1,
-      target_type: 0,
-      content: content,
-      content_type: 'html',
-      page_url: '/pages/message/message_detail'
-    )
+    # content = render_to_string(:template => 'month_payment/index.html', layout: false)
+    # content = File.read(File.join('log/test.md'))
+    # current_user.messages.create(
+    #   title: '账单',
+    #   target_id: 1,
+    #   target_type: 0,
+    #   content: content,
+    #   content_type: 'md',
+    #   page_url: '/pages/message/message_detail'
+    # )
     @messages = current_user.messages.order('created_at desc')
   end
 
