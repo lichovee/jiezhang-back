@@ -5,14 +5,13 @@ class Api::StatementsController < Api::ApiController
 
 	def create
 		service = StatementsService.new(current_user, params)
-		service.create!
-		render_success
+		@statement = service.create!
 	end
 
 	def update
 		service = StatementsService.new(current_user, params)
-		service.update!
-		render_success
+		@statement = service.update!
+		render 'create'
 	end
 
 	def destroy

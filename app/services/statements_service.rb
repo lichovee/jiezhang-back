@@ -53,14 +53,15 @@ class StatementsService
 		asset_amount = statement.asset.amount
     amount = statement.type == 'expend' ? asset_amount - statement.amount : asset_amount + statement.amount
     statement.residue = amount
-    
-		statement.save!
+    statement.save!
+    statement
   end
   
   def update_statement
     validate_asset_category!
     time = Time.parse("#{params[:date]} #{params[:time]}")
-		statement.update_attributes!(api_params)
+    statement.update_attributes!(api_params)
+    statement
   end
 
   def create_transfer
