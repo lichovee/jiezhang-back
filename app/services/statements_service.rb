@@ -71,6 +71,13 @@ class StatementsService
       raise '无效的资产类型'
     end
 
+    statement = current_user.statements.new(api_params.merge(
+      asset_id: from_asset.id,
+      target_asset: to_asset.id
+    ))
+    statement.residue = from_asset.id - statement.amount
+    statement.save!
+
     asset_logs = current_user.asset_logs.new(
       type: AssetLog::TRANSFER,
       from: from_asset.id,
@@ -85,6 +92,7 @@ class StatementsService
     to_asset.update_attribute(:amount, to_amount)
     asset_logs.residue = from_amount
     asset_logs.save!
+    statement
   end
   
   def update_transfer

@@ -6,12 +6,19 @@ class Api::StatementsController < Api::ApiController
 	def create
 		service = StatementsService.new(current_user, params)
 		@statement = service.create!
+		unless @statement.is_a?(Statement)
+			return render_success
+		end
 	end
 
 	def update
 		service = StatementsService.new(current_user, params)
 		@statement = service.update!
-		render 'create'
+		if @statement.is_a?(Statement)
+			render 'create'
+		else
+			render_success
+		end
 	end
 
 	def destroy
