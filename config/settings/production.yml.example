@@ -1,4 +1,5 @@
 host: 'your domain'
 exception_email: ['your email']
-appid: ''
-app_secret: ''
+wechat:
+  appid: ''
+  app_secret: ''
