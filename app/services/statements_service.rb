@@ -7,78 +7,33 @@ class StatementsService
     @params = params.require(:statement) if params[:statement].present?
   end
 
-  def list
-    @statements = filter_statements.includes(:category, :asset).order('created_at desc')
-    @statements.collect do |st|
-      {
-        id: st.id,
-        day: st.day,
-        week: weekday(Time.parse("#{st.year}-#{st.month}-#{st.day}").wday),
-        type: st.type,
-        category: st.category.name,
-        icon_path: st.category.icon_url,
-        description: st.description,
-        money: money_format(st.amount),
-        timeStr: st.created_at.strftime("%m-%d %H:%M"),
-        asset: st.asset.name
-      }
-    end
-  end
-
   def create!
     validate_asset_category!
     current_user.statements.create!(api_params)
   end
 
   def update!
-    if params[:type] == 'expend' || params[:type] == 'income'
-      update_statement
-    elsif params[:type] == 'transfer'
-      update_transfer
-    else
-      raise '无效的类型'
-    end
-  end
-  
-  private
-
-  def update_statement
     validate_asset_category!
     time = Time.parse("#{params[:date]} #{params[:time]}")
     statement.update_attributes!(api_params)
+    update_transfer_amount if statement.transfer?
     statement
   end
   
-  def update_transfer
-    from_asset = current_user.assets.find_by_id(params[:from])
-    to_asset = current_user.assets.find_by_id(params[:to])
-    if from_asset.blank? || to_asset.blank?
-      raise '无效的资产类型'
-    end
-
-    transfer_asset = current_user.asset_logs.find_by_id(params[:asset_log_id])
-    raise '转账记录或已删除' if transfer_asset.blank?
-
+  private
+  
+  def update_transfer_amount
     # 还原原来的资产金额记录
-    source_asset = transfer_asset.source
-    target_asset = transfer_asset.target
-    source_asset.update_attribute(:amount, source_asset.amount + transfer_asset.amount)
-    target_asset.update_attribute(:amount, target_asset.amount - transfer_asset.amount)
-
-    # 更新 asset_logs 记录
-    transfer_asset.from = from_asset.id
-    transfer_asset.to = to_asset.id
-    transfer_asset.amount = params[:amount]
-    transfer_asset.description = params[:description]
-
+    source_asset = statement.asset
+    target_asset = statement.target_asset
+    source_asset.update_attribute(:amount, source_asset.amount + statement.amount)
+    target_asset.update_attribute(:amount, target_asset.amount - statement.amount)
     # 更新转账的资产记录
-    from_amount = from_asset.amount - transfer_asset.amount
-    to_amount = to_asset.amount + transfer_asset.amount
-    from_asset.update_attribute(:amount, from_amount)
-    to_asset.update_attribute(:amount, to_amount)
-
-    transfer_asset.residue = from_amount
-    transfer_asset.save!
+    from_asset.update_attribute(:amount, from_asset.amount - statement.amount)
+    to_asset.update_attribute(:amount, to_asset.amount + statement.amount)
+    # 更新变更后的余额
+    statement.residue = from_asset.amount - statement.amount
+    statement.save!
   end
 
   def validate_asset_category!
