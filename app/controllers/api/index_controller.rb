@@ -3,7 +3,6 @@ class Api::IndexController < Api::ApiController
     begin_week = Time.now.beginning_of_week.beginning_of_day
     end_week = Time.now.end_of_week.end_of_day
     @statements = current_user.statements.includes(:category, :asset).where("created_at >= ? AND created_at <= ?", begin_week, end_week).order('created_at desc')
-    return render json: { status: 405, msg: '没有更多啦' } if @statements.blank?
   end
 
   def header

@@ -20,8 +20,11 @@ class Statement < ApplicationRecord
     asset_amount = self.asset.amount
     if self.type == 'expend'
       amount = asset_amount + self.amount
-    else
+    elsif type == 'income'
       amount = asset_amount - self.amount
+    else
+      amount = asset_amount + self.amount
+      self.target_asset.update_attribute(:amount, self.target_asset.amount - self.amount)
     end
     self.asset.update_attribute(:amount, amount)
   end
