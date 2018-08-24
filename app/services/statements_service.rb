@@ -1,5 +1,5 @@
 class StatementsService
-  attr_accessor :current_user, :params, :source_params
+  attr_accessor :current_user, :params, :source_params, :from_asset, :to_asset
   include ApplicationHelper
   def initialize(current_user, params = {})
     @current_user = current_user
@@ -26,13 +26,8 @@ class StatementsService
   end
 
   def create!
-    if params[:type] == 'expend' || params[:type] == 'income'
-      create_statement
-    elsif params[:type] == 'transfer'
-      create_transfer
-    else
-      raise '无效的类型'
-    end
+    validate_asset_category!
+    current_user.statements.create!(api_params)
   end
 
   def update!
@@ -44,54 +39,13 @@ class StatementsService
       raise '无效的类型'
     end
   end
-
+  
   private
 
-  def create_statement
-    validate_asset_category!
-    statement = current_user.statements.new(api_params)
-		asset_amount = statement.asset.amount
-    amount = statement.type == 'expend' ? asset_amount - statement.amount : asset_amount + statement.amount
-    statement.residue = amount
-    statement.save!
-    statement
-  end
-  
   def update_statement
     validate_asset_category!
     time = Time.parse("#{params[:date]} #{params[:time]}")
     statement.update_attributes!(api_params)
-    statement
-  end
-
-  def create_transfer
-    from_asset = current_user.assets.find_by_id(params[:from])
-    to_asset = current_user.assets.find_by_id(params[:to])
-    if from_asset.blank? || to_asset.blank?
-      raise '无效的资产类型'
-    end
-
-    statement = current_user.statements.new(api_params.merge(
-      asset_id: from_asset.id,
-      target_asset: to_asset.id
-    ))
-    statement.residue = from_asset.id - statement.amount
-    statement.save!
-
-    asset_logs = current_user.asset_logs.new(
-      type: AssetLog::TRANSFER,
-      from: from_asset.id,
-      to: to_asset.id,
-      amount: params[:amount],
-      description: params[:description]
-    )
-    
-    from_amount = from_asset.amount - asset_logs.amount
-    to_amount = to_asset.amount + asset_logs.amount
-    from_asset.update_attribute(:amount, from_amount)
-    to_asset.update_attribute(:amount, to_amount)
-    asset_logs.residue = from_amount
-    asset_logs.save!
     statement
   end
   
@@ -128,10 +82,18 @@ class StatementsService
   end
 
   def validate_asset_category!
-    asset = current_user.assets.find_by_id(params[:asset_id])
-		category = current_user.categories.find_by_id(params[:category_id])
-		if asset.blank? || category.blank?
-			raise '无效的账户/分类'
+    if params[:type] == 'transfer'
+      @from_asset = current_user.assets.find_by_id(params[:from])
+      @to_asset = current_user.assets.find_by_id(params[:to])
+      if from_asset.blank? || to_asset.blank?
+        raise '无效的资产类型'
+      end
+    else
+      asset = current_user.assets.find_by_id(params[:asset_id])
+		  category = current_user.categories.find_by_id(params[:category_id])
+      if asset.blank? || category.blank?
+        raise '无效的账户/分类'
+      end
     end
   end
 
@@ -184,6 +146,14 @@ class StatementsService
 			time: time.strftime("%H:%M"),
 			created_at: time
     }
+
+    if params[:type] == 'transfer'
+      p[:asset_id] = params[:from]
+      p[:target_asset_id] = params[:to]
+      p[:title] = "#{from_asset.name} -> #{to_asset.name}"
+      p[:category_id] = current_user.categories.where(type: 'transfer', lock: 1, name: '转账').first.id
+    end
+
     if params[:location].present?
       p.merge!(
         location: params[:location],

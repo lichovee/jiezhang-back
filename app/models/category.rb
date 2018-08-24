@@ -1,6 +1,6 @@
 class Category < ApplicationRecord
-
   self.inheritance_column = nil
+  
   has_many :statements
   belongs_to :user
   belongs_to :parent, foreign_key: 'parent_id', class_name: 'Category', optional: true

@@ -1,5 +1,5 @@
 class Api::MessageController < Api::ApiController
-  before_action :get_data, only: [:index, :test]
+  # before_action :get_data, only: [:index, :test]
   def index
     # content = render_to_string(:template => 'month_payment/index.html', layout: false)
     # content = File.read(File.join('log/test.md'))

@@ -4,6 +4,7 @@ class Statement < ApplicationRecord
 
   belongs_to :user
   belongs_to :asset, optional: true
+  belongs_to :target_asset, foreign_key: :target_asset_id, class_name: 'Asset'
   belongs_to :category
   scope :expend, -> { where("`statements`.type = 'expend'") }
   scope :income, -> { where("`statements`.type = 'income'") }
@@ -11,7 +12,7 @@ class Statement < ApplicationRecord
   INCOME = 'income'
   EXPEND = 'expend'
 
-  after_create :update_category_and_asset
+  after_create :after_create_statement
   after_update :update_asset_amount
   after_destroy :destroy_asset
 
@@ -25,16 +26,21 @@ class Statement < ApplicationRecord
     self.asset.update_attribute(:amount, amount)
   end
   
-  def update_category_and_asset
-    amount = self.type == 'expend' ? self.asset.amount - self.amount : self.asset.amount + self.amount
+  def after_create_statement
+    amount = self.type == 'income' ? self.asset.amount + self.amount : self.asset.amount - self.amount
     category.increment(:frequent, by = 1).save
     asset.increment(:frequent, by = 1).save
     self.asset.update_attribute(:amount, amount)
+    self.update_attribute(:residue, amount)
+    if target_asset_id.present? && target_asset.present?
+      target_asset.update_attribute(:amount, self.target_asset.amount + self.amount)
+    end
     # 更新用户积分
     BonusPointsLog.update_user_points(user, BonusPointsLog::STATEMENT)
   end
 
   def update_asset_amount
+    return if type == 'transfer'
     # # 判断收入/支出是否有更改
     type_strs = self.type_change
     if type_strs.nil?

@@ -1,7 +1,7 @@
-json.(statement, :id, :type, :description)
+json.(statement, :id, :type, :description, :title)
 json.money money_format(statement.amount)
 json.date statement.date.strftime("%Y-%m-%d")
-json.category statement.category.name
+json.category statement.title.present? ? statement.title : statement.category.name
 json.icon_path statement.category.icon_url
 json.asset statement.asset.name
 json.time statement.hour_s
