@@ -9,6 +9,7 @@ module UserAble
 		initialize_assets
 		initialize_expend_categories
 		initialize_income_categories
+		initialize_transfer_category
   end
 
 	private
@@ -227,6 +228,15 @@ module UserAble
 			{name: '意外来钱', icon_path: "#{category_icon_path}/chuangyi.png", parent_id: parent_id, type: 'income'},
 			{name: '红包收入', icon_path: "#{category_icon_path}/hongbao.png", parent_id: parent_id, type: 'income'},
 		].each{|hs| self.categories.create(hs) }
+	end
+
+	def initialize_transfer_category
+		self.categories.create(
+			name: '转账',
+			icon_path: '/transfer-icon.png',
+			type: 'transfer',
+			lock: 1
+		)
 	end
 
 end
