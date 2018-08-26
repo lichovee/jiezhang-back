@@ -17,6 +17,7 @@ class Statement < ApplicationRecord
   after_destroy :destroy_asset
 
   def destroy_asset
+    return if self.asset.blank?
     asset_amount = self.asset.amount
     if self.type == 'expend'
       amount = asset_amount + self.amount
